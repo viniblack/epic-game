@@ -8,7 +8,11 @@ async function main() {
       "https://i.imgur.com/Pj8lHpM.png",
     ],
     [100, 200, 300],
-    [100, 50, 25]
+    [100, 50, 25],
+    "Capitão Nascimento",
+    "https://i.imgur.com/yWpKMDt.png",
+    10000,
+    50
   );
   console.log("Contrato implantado no endereço:", gameContract.target);
 

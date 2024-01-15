@@ -8,7 +8,11 @@ async function main() {
       "https://i.imgur.com/Pj8lHpM.png",
     ],
     [100, 200, 300], // Pontos de vida
-    [100, 50, 25] // Dando de ataque
+    [100, 50, 25], // Dando de ataque
+    "Capitão Nascimento",
+    "https://i.imgur.com/yWpKMDt.png",
+    10000, // Pontos de vida do boss
+    50 // Dando de ataque do boss
   );
   console.log("Contrato implantado no endereço:", gameContract.target);
 
@@ -16,6 +20,12 @@ async function main() {
   // Só temos três personagens.
   // Uma NFT com personagem no index 2 da nossa array.
   txn = await gameContract.mintCharacterNFT(2);
+  await txn.wait();
+
+  txn = await gameContract.attackBoss();
+  await txn.wait();
+
+  txn = await gameContract.attackBoss();
   await txn.wait();
 
   // Pega o valor da URI da NFT
