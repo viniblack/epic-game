@@ -1,32 +1,33 @@
-// We require the Hardhat Runtime Environment explicitly here. This is optional
-// but useful for running the script in a standalone fashion through `node <script>`.
-//
-// You can also run a script with `npx hardhat run <script>`. If you do that, Hardhat
-// will compile your contracts, add the Hardhat Runtime Environment's members to the
-// global scope, and execute the script.
-const hre = require("hardhat");
-
 async function main() {
-  const currentTimestampInSeconds = Math.round(Date.now() / 1000);
-  const unlockTime = currentTimestampInSeconds + 60;
-
-  const lockedAmount = hre.ethers.parseEther("0.001");
-
-  const lock = await hre.ethers.deployContract("Lock", [unlockTime], {
-    value: lockedAmount,
-  });
-
-  await lock.waitForDeployment();
-
-  console.log(
-    `Lock with ${ethers.formatEther(
-      lockedAmount
-    )}ETH and unlock timestamp ${unlockTime} deployed to ${lock.target}`
+  const gameContractFactory = await hre.ethers.getContractFactory("MyEpicGame");
+  const gameContract = await gameContractFactory.deploy(
+    ["Anitta", "Ronaldinho Gaúcho", "Zeca Pagodinho"],
+    [
+      "https://i.imgur.com/gC5qXsl.png",
+      "https://i.imgur.com/0PvxtwP.png",
+      "https://i.imgur.com/Pj8lHpM.png",
+    ],
+    [100, 200, 300],
+    [100, 50, 25]
   );
+  console.log("Contrato implantado no endereço:", gameContract.target);
+
+  let txn;
+  txn = await gameContract.mintCharacterNFT(0);
+  await txn.wait();
+  console.log("Mintou NFT #1");
+
+  txn = await gameContract.mintCharacterNFT(1);
+  await txn.wait();
+  console.log("Mintou NFT #2");
+
+  txn = await gameContract.mintCharacterNFT(2);
+  await txn.wait();
+  console.log("Mintou NFT #3");
+
+  console.log("Fim do deploy e mint!");
 }
 
-// We recommend this pattern to be able to use async/await everywhere
-// and properly handle errors.
 main().catch((error) => {
   console.error(error);
   process.exitCode = 1;
