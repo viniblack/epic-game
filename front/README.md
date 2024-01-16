@@ -1,8 +1,17 @@
-# React + Vite
+# WEB3DEV NFT Game
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+### **Bem-vind@ 👋**
 
-Currently, two official plugins are available:
+Para iniciar o projeto, clone esse repo e siga esses comandos:
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+1. Rode `npm install` na raíz do seu projeto
+2. Rode `npm run start` para iniciar
+3. Comece a codar!
+
+### O que é a pasta `.vscode`?
+
+Se você usa VSCode, incluímos uma lista de extensões sugeridas que vão ajudar nesse projeto! Assim que abrir esse projeto, verá um popup perguntando se deseja instalar essas extenções :).
+
+### **Perguntas?**
+
+Se tiver perguntas, entre no [Discord da WEB3DEV](https://discord.web3dev.com.br) e faça suas perguntas nas sessões de ajuda desse bootcamp.

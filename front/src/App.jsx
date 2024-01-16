@@ -1,34 +1,35 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
+import twitterLogo from "./assets/twitter-logo.svg"
 import './App.css'
 
-function App() {
-  const [count, setCount] = useState(0)
+// Constants
+const TWITTER_HANDLE = "web3dev_"
+const TWITTER_LINK = `https://twitter.com/${TWITTER_HANDLE}`
 
+function App() {
   return (
-    <>
-      <div>
-        <a href="https://vitejs.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
+    <div className="App">
+      <div className="container">
+        <div className="header-container">
+          <p className="header gradient-text">⚔️ Batalhas no Metaverso ⚔️</p>
+          <p className="sub-text">Junte-se a mim para vencer os inimigos do Metaverso!</p>
+          <div className="connect-wallet-container">
+            <img
+              src="https://i.imgur.com/NqlaaTJ.gif"
+              alt="Nascimento Gif"
+            />
+          </div>
+        </div>
+        <div className="footer-container">
+          <img alt="Twitter Logo" className="twitter-logo" src={twitterLogo} />
+          <a
+            className="footer-text"
+            href={TWITTER_LINK}
+            target="_blank"
+            rel="noreferrer"
+          >{`construído por @${TWITTER_HANDLE}`}</a>
+        </div>
       </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.jsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </>
+    </div>
   )
 }
 
