@@ -108,6 +108,13 @@ contract MyEpicGame is ERC721 {
         _tokenIds.increment();
     }
 
+    event CharacterNFTMinted(
+        address sender,
+        uint256 tokenId,
+        uint256 characterIndex
+    );
+    event AttackComplete(uint newBossHp, uint newPlayerHp);
+
     // Usuarios vao poder usar essa funcao e pegar a NFT baseado no personagem que mandarem!
     function mintCharacterNFT(uint _characterIndex) external {
         // Pega o tokenId atual (começa em 1 já que incrementamos no constructor).
@@ -139,6 +146,7 @@ contract MyEpicGame is ERC721 {
 
         // Incrementa o tokenId para a proxima pessoa que usar.
         _tokenIds.increment();
+        emit CharacterNFTMinted(msg.sender, newItemId, _characterIndex);
     }
 
     function attackBoss() public {
@@ -189,6 +197,8 @@ contract MyEpicGame is ERC721 {
             "Boss atacou o jogador. Jogador ficou com hp: %s\n",
             player.hp
         );
+
+        emit AttackComplete(bigBoss.hp, player.hp);
     }
 
     function tokenURI(
@@ -227,5 +237,35 @@ contract MyEpicGame is ERC721 {
         );
 
         return output;
+    }
+
+    function checkIfUserHasNFT()
+        public
+        view
+        returns (CharacterAttributes memory)
+    {
+        // Pega o tokenId do personagem NFT do usuario
+        uint256 userNftTokenId = nftHolders[msg.sender];
+        // Se o usuario tiver um tokenId no map, retorne seu personagem
+        if (userNftTokenId > 0) {
+            return nftHolderAttributes[userNftTokenId];
+        }
+        // Senão, retorne um personagem vazio
+        else {
+            CharacterAttributes memory emptyStruct;
+            return emptyStruct;
+        }
+    }
+
+    function getAllDefaultCharacters()
+        public
+        view
+        returns (CharacterAttributes[] memory)
+    {
+        return defaultCharacters;
+    }
+
+    function getBigBoss() public view returns (BigBoss memory) {
+        return bigBoss;
     }
 }
