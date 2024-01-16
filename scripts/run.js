@@ -14,7 +14,7 @@ async function main() {
     10000, // Pontos de vida do boss
     50 // Dando de ataque do boss
   );
-  console.log("Contrato implantado no endereço:", gameContract.target);
+  console.log("Contrato deployado no endereço:", gameContract.target);
 
   let txn;
   // Só temos três personagens.
