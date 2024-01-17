@@ -4,7 +4,10 @@
 import { useEffect, useState } from "react";
 import "./App.css";
 import SelectCharacter from "./Components/SelectCharacter";
+import { CONTRACT_ADDRESS, transformCharacterData } from "./constants";
 import twitterLogo from "./assets/twitter-logo.svg";
+import myEpicGame from "./utils/MyEpicGame.json";
+import { ethers } from "ethers";
 
 // Constantes
 const TWITTER_HANDLE = "Web3dev_";
@@ -111,6 +114,54 @@ const App = () => {
   useEffect(() => {
     checkIfWalletIsConnected();
   }, []);
+
+  useEffect(() => {
+    const checkNetwork = async () => {
+      try {
+        if (window.ethereum.networkVersion !== "84532") {
+          alert("Please connect to Sepolia!");
+        }
+      } catch (error) {
+        console.log(error);
+      }
+    };
+  }, []);
+
+  useEffect(() => {
+    /*
+     * A função que vamos chamar que interage com nosso contrato inteligente
+     */
+    const fetchNFTMetadata = async () => {
+      console.log(
+        "Verificando pelo personagem NFT no endereço:",
+        currentAccount
+      );
+
+      const provider = new ethers.providers.Web3Provider(window.ethereum);
+      const signer = provider.getSigner();
+      const gameContract = new ethers.Contract(
+        CONTRACT_ADDRESS,
+        myEpicGame.abi,
+        signer
+      );
+
+      const txn = await gameContract.checkIfUserHasNFT();
+      if (txn.name) {
+        console.log("Usuário tem um personagem NFT");
+        setCharacterNFT(transformCharacterData(txn));
+      } else {
+        console.log("Nenhum personagem NFT foi encontrado");
+      }
+    };
+
+    /*
+     * Nós so queremos rodar isso se tivermos uma wallet conectada
+     */
+    if (currentAccount) {
+      console.log("Conta Atual:", currentAccount);
+      fetchNFTMetadata();
+    }
+  }, [currentAccount]);
 
   return (
     <div className="App">
