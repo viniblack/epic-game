@@ -3,6 +3,7 @@
  */
 import { useEffect, useState } from "react";
 import "./App.css";
+import SelectCharacter from "./Components/SelectCharacter";
 import twitterLogo from "./assets/twitter-logo.svg";
 
 // Constantes
@@ -14,6 +15,10 @@ const App = () => {
    * Só uma variável de estado que vamos usar para armazenar a carteira pública do usuário.
    */
   const [currentAccount, setCurrentAccount] = useState(null);
+  /*
+   * Logo abaixo da conta, configure essa propriedade de novo estado.
+   */
+  const [characterNFT, setCharacterNFT] = useState(null);
 
   /*
    * Já que esse método vai levar um tempo, lembre-se de declará-lo como async
@@ -46,6 +51,31 @@ const App = () => {
       }
     } catch (error) {
       console.log(error);
+    }
+  };
+
+  // Métodos de renderização
+  const renderContent = () => {
+    /*
+     * cenário #1
+     */
+    if (!currentAccount) {
+      return (
+        <div className="connect-wallet-container">
+          <img src="https://i.imgur.com/NqlaaTJ.gif" alt="Nascimento Gif" />
+          <button
+            className="cta-button connect-wallet-button"
+            onClick={connectWalletAction}
+          >
+            Conecte sua carteira para começar
+          </button>
+        </div>
+      );
+      /*
+       * cenário #2
+       */
+    } else if (currentAccount && !characterNFT) {
+      return <SelectCharacter setCharacterNFT={setCharacterNFT} />;
     }
   };
 
@@ -86,23 +116,12 @@ const App = () => {
     <div className="App">
       <div className="container">
         <div className="header-container">
-          <p className="header gradient-text">⚔️ Batalhas no Metaverso ⚔️</p>
+          <p className="header gradient-text">⚔️ Metaverso Slayer ⚔️</p>
           <p className="sub-text">Junte os amigos e proteja o Metaverso!!</p>
-          <div className="connect-wallet-container">
-            <img
-              src="https://i.imgur.com/NqlaaTJ.gif"
-              alt="Nascimento Gif"
-            />
-            {/*
-             * Botão que vamos usar para disparar a conexão da carteira. Não esqueça de adicionar o evento onClick para chamar seu método!
-             */}
-            <button
-              className="cta-button connect-wallet-button"
-              onClick={connectWalletAction}
-            >
-              Conecte sua carteira para começar
-            </button>
-          </div>
+          {/*
+           * Aqui é onde nosso botão e código de imagem ficava! Lembre-se que movemos para o método de renderização.
+           */}
+          {renderContent()}
         </div>
         <div className="footer-container">
           <img alt="Twitter Logo" className="twitter-logo" src={twitterLogo} />
