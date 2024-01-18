@@ -7,6 +7,7 @@ import SelectCharacter from "./Components/SelectCharacter";
 import { CONTRACT_ADDRESS, transformCharacterData } from "./constants";
 import twitterLogo from "./assets/twitter-logo.svg";
 import myEpicGame from "./utils/MyEpicGame.json";
+import Arena from "./Components/Arena";
 import { ethers } from "ethers";
 
 // Constantes
@@ -74,11 +75,15 @@ const App = () => {
           </button>
         </div>
       );
-      /*
-       * cenário #2
-       */
     } else if (currentAccount && !characterNFT) {
       return <SelectCharacter setCharacterNFT={setCharacterNFT} />;
+      /*
+       * Se tiver uma carteira conectada e um personagem NFT, é hora de batalhar!
+       */
+    } else if (currentAccount && characterNFT) {
+      return (
+        <Arena characterNFT={characterNFT} setCharacterNFT={setCharacterNFT} />
+      );
     }
   };
 
