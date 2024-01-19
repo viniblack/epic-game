@@ -1,24 +1,41 @@
-import React, { useEffect, useState } from "react";
-import "./SelectCharacter.css";
+import { useEffect, useState } from "react";
 import { ethers } from "ethers";
 import { CONTRACT_ADDRESS, transformCharacterData } from "../../constants";
 import myEpicGame from "../../utils/MyEpicGame.json";
+import LoadingIndicator from "../LoadingIndicator";
+import "./SelectCharacter.css";
 
 const SelectCharacter = ({ setCharacterNFT }) => {
   const [characters, setCharacters] = useState([]);
   const [gameContract, setGameContract] = useState(null);
+  /*
+   * New minting state property we will be using
+   */
+  const [mintingCharacter, setMintingCharacter] = useState(false);
 
   // Actions
   const mintCharacterNFTAction = (characterId) => async () => {
     try {
       if (gameContract) {
+        /*
+         * Mostre nosso indicador de carregamento
+         */
+        setMintingCharacter(true);
         console.log("Mintando personagem...");
         const mintTxn = await gameContract.mintCharacterNFT(characterId);
         await mintTxn.wait();
-        console.log("mintTxn:", mintTxn);
+        console.log(mintTxn);
+        /*
+         * Esconde nosso indicador de carregamento quando o mint for terminado
+         */
+        setMintingCharacter(false);
       }
     } catch (error) {
-      console.warn("MintCharacterAction Error:", error);
+      console.warn("Ação de mintar com erro: ", error);
+      /*
+       * Se tiver um problema, esconda o indicador de carregamento também
+       */
+      setMintingCharacter(false);
     }
   };
 
@@ -73,8 +90,9 @@ const SelectCharacter = ({ setCharacterNFT }) => {
       if (gameContract) {
         const characterNFT = await gameContract.checkIfUserHasNFT();
         console.log("CharacterNFT: ", characterNFT);
+        console.log("gameContract: ", gameContract);
         alert(
-          `Seu NFT está pronto -- veja aqui: https://testnets.opensea.io/assets/${gameContract}/${tokenId.toNumber()}`
+          `Seu NFT está pronto -- veja aqui: https://testnets.opensea.io/assets/sepolia/${gameContract.address}/${tokenId.toNumber()}`
         );
         setCharacterNFT(transformCharacterData(characterNFT));
       }
@@ -117,11 +135,22 @@ const SelectCharacter = ({ setCharacterNFT }) => {
 
   return (
     <div className="select-character-container">
-      <h2>Minte seu Herói. Escolha com sabedoria.</h2>
-      {/* Só mostra isso se tiver personagens no estado
-       */}
+      <h2>Minte seu herói. Escolha com sabedoria</h2>
       {characters.length > 0 && (
         <div className="character-grid">{renderCharacters()}</div>
+      )}
+      {/* Só mostre o seu indicador de carregamento se mintingCharacter for verdadeiro */}
+      {mintingCharacter && (
+        <div className="loading">
+          <div className="indicator">
+            <LoadingIndicator />
+            <p>Mintando personagem...</p>
+          </div>
+          <img
+            src="http://pa1.narvii.com/6623/1d810c548fc9695d096d54372b625d207373130a_00.gif"
+            alt="Indicador de Mintagem"
+          />
+        </div>
       )}
     </div>
   );

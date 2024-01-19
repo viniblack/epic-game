@@ -2,13 +2,14 @@
  * Nós vamos precisar usar estados agora! Não esqueça de importar useState
  */
 import { useEffect, useState } from "react";
-import "./App.css";
-import SelectCharacter from "./Components/SelectCharacter";
-import { CONTRACT_ADDRESS, transformCharacterData } from "./constants";
-import twitterLogo from "./assets/twitter-logo.svg";
-import myEpicGame from "./utils/MyEpicGame.json";
-import Arena from "./Components/Arena";
 import { ethers } from "ethers";
+import { CONTRACT_ADDRESS, transformCharacterData } from "./constants";
+import myEpicGame from "./utils/MyEpicGame.json";
+import twitterLogo from "./assets/twitter-logo.svg";
+import SelectCharacter from "./Components/SelectCharacter";
+import LoadingIndicator from "./Components/LoadingIndicator";
+import Arena from "./Components/Arena";
+import "./App.css";
 
 // Constantes
 const TWITTER_HANDLE = "Web3dev_";
@@ -23,6 +24,10 @@ const App = () => {
    * Logo abaixo da conta, configure essa propriedade de novo estado.
    */
   const [characterNFT, setCharacterNFT] = useState(null);
+  /*
+   * Nova propriedade de estado adicionado aqui
+   */
+  const [isLoading, setIsLoading] = useState(false);
 
   /*
    * Já que esse método vai levar um tempo, lembre-se de declará-lo como async
@@ -32,37 +37,43 @@ const App = () => {
       const { ethereum } = window;
 
       if (!ethereum) {
-        console.log("Eu acho que você não tem a metamask!");
+        console.log("Parece que você não tem a metamask instalada!");
+        /*
+         * Nós configuramos o isLoading aqui porque usamos o return na proxima linha
+         */
+        setIsLoading(false);
         return;
       } else {
-        console.log("Nós temos o objeto ethereum", ethereum);
+        console.log("Objeto ethereum encontrado:", ethereum);
 
-        /*
-         * Checa se estamos autorizados a acessar a carteira do usuário.
-         */
         const accounts = await ethereum.request({ method: "eth_accounts" });
 
-        /*
-         * Usuário pode ter múltiplas contas autorizadas, pegamos a primeira se estiver ali!
-         */
         if (accounts.length !== 0) {
           const account = accounts[0];
-          console.log("Carteira conectada::", account);
+          console.log("Carteira conectada:", account);
           setCurrentAccount(account);
         } else {
-          console.log("Não encontramos uma carteira conectada");
+          console.log("Não foi encontrada uma carteira conectada");
         }
       }
     } catch (error) {
       console.log(error);
     }
+    /*
+     * Nós lançamos a propriedade de estado depois de toda lógica da função
+     */
+    setIsLoading(false);
   };
 
   // Métodos de renderização
   const renderContent = () => {
     /*
-     * cenário #1
+     * Se esse app estiver carregando, renderize o indicador de carregamento
      */
+    if (isLoading) {
+      return <LoadingIndicator />;
+    }
+
     if (!currentAccount) {
       return (
         <div className="connect-wallet-container">
@@ -71,15 +82,12 @@ const App = () => {
             className="cta-button connect-wallet-button"
             onClick={connectWalletAction}
           >
-            Conecte sua carteira para começar
+            Conecte sua carteira
           </button>
         </div>
       );
     } else if (currentAccount && !characterNFT) {
       return <SelectCharacter setCharacterNFT={setCharacterNFT} />;
-      /*
-       * Se tiver uma carteira conectada e um personagem NFT, é hora de batalhar!
-       */
     } else if (currentAccount && characterNFT) {
       return (
         <Arena characterNFT={characterNFT} setCharacterNFT={setCharacterNFT} />
@@ -132,10 +140,16 @@ const App = () => {
     };
   }, []);
 
+  // UseEffects
   useEffect(() => {
     /*
-     * A função que vamos chamar que interage com nosso contrato inteligente
+     * Quando nosso componente for montado, tenha certeza de configurar o estado de carregamento
      */
+    setIsLoading(true);
+    checkIfWalletIsConnected();
+  }, []);
+
+  useEffect(() => {
     const fetchNFTMetadata = async () => {
       console.log(
         "Verificando pelo personagem NFT no endereço:",
@@ -150,18 +164,20 @@ const App = () => {
         signer
       );
 
-      const txn = await gameContract.checkIfUserHasNFT();
+      const characterNFT = await gameContract.checkIfUserHasNFT();
       if (txn.name) {
         console.log("Usuário tem um personagem NFT");
         setCharacterNFT(transformCharacterData(txn));
       } else {
         console.log("Nenhum personagem NFT foi encontrado");
       }
+
+      /*
+       * Uma vez que tivermos acabado a busca, configure o estado de carregamento para falso.
+       */
+      setIsLoading(false);
     };
 
-    /*
-     * Nós so queremos rodar isso se tivermos uma wallet conectada
-     */
     if (currentAccount) {
       console.log("Conta Atual:", currentAccount);
       fetchNFTMetadata();
