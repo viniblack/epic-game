@@ -215,20 +215,24 @@ contract MyEpicGame is ERC721 {
         );
 
         string memory json = Base64.encode(
-            abi.encodePacked(
-                '{"name": "',
-                charAttributes.name,
-                " -- NFT #: ",
-                Strings.toString(_tokenId),
-                '", "description": "Esta NFT da acesso ao meu jogo NFT!", "image": "',
-                charAttributes.imageURI,
-                '", "attributes": [ { "trait_type": "Health Points", "value": ',
-                strHp,
-                ', "max_value":',
-                strMaxHp,
-                '}, { "trait_type": "Attack Damage", "value": ',
-                strAttackDamage,
-                "} ]}"
+            bytes(
+                string(
+                    abi.encodePacked(
+                        '{"name": "',
+                        charAttributes.name,
+                        " -- NFT #: ",
+                        Strings.toString(_tokenId),
+                        '", "description": "Esta NFT da acesso ao meu jogo NFT!", "image": "ipfs://',
+                        charAttributes.imageURI,
+                        '", "attributes": [ { "trait_type": "Health Points", "value": ',
+                        strHp,
+                        ', "max_value":',
+                        strMaxHp,
+                        '}, { "trait_type": "Attack Damage", "value": ',
+                        strAttackDamage,
+                        "} ]}"
+                    )
+                )
             )
         );
 
